@@ -187,7 +187,16 @@ async def mma(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def amore(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await show_category(update, context, "AMORE")
+async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
+    cur.execute("DELETE FROM links")
+
+    conn.commit()
+    conn.close()
+
+    await update.message.reply_text("🧹 Archivio completamente resettato.")
 
 def main():
     init_db()
@@ -202,7 +211,7 @@ def main():
     app.add_handler(CommandHandler("formula1", formula1))
     app.add_handler(CommandHandler("mma", mma))
     app.add_handler(CommandHandler("amore", amore))
-
+    app.add_handler(CommandHandler("reset", reset))
     app.add_handler(CallbackQueryHandler(handle_category_choice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
